@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}System Zarządzania Flotą{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --fleet-navy: #1b2e42;
+            --fleet-sky-blue: #4bb8e8;
+            --fleet-lime-green: #8fd14f;
+        }
+
+        /* Jasny, lodowo-błękitny pasek menu — pełny kontrast dla granatowego logo i jego cienia */
+        .navbar-fleet {
+            background: linear-gradient(135deg, #ffffff 0%, #e4f3fc 100%);
+            border-bottom: 3px solid var(--fleet-sky-blue);
+            box-shadow: 0 4px 14px rgba(27, 46, 66, 0.08);
+        }
+
+        /* Marka i tytuł obok logo */
+        .navbar-fleet .navbar-brand {
+            color: var(--fleet-navy);
+            font-size: 1.35rem;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-fleet .navbar-brand:hover {
+            color: var(--fleet-sky-blue);
+        }
+
+        /* Logo z wyraźnym cieniem rzucanym na jasne tło paska */
+        .brand-logo {
+            height: 54px;
+            width: auto;
+            filter: drop-shadow(0 6px 10px rgba(27, 46, 66, 0.45));
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .navbar-brand:hover .brand-logo {
+            transform: translateY(-2px);
+            filter: drop-shadow(0 9px 14px rgba(27, 46, 66, 0.6));
+        }
+
+        /* Linki w menu w kolorze granatu z logo */
+        .navbar-fleet .nav-link {
+            color: var(--fleet-navy);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-fleet .nav-link:hover,
+        .navbar-fleet .nav-link:focus {
+            color: #ffffff;
+            background-color: var(--fleet-navy);
+            box-shadow: 0 3px 8px rgba(27, 46, 66, 0.2);
+        }
+
+        /* Stopka w granacie z logo dla spójnej klamry wizualnej */
+        .footer-fleet {
+            background-color: var(--fleet-navy);
+            border-top: 3px solid var(--fleet-sky-blue);
+        }
+    </style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <!-- Pasek nawigacji -->
+    <nav class="navbar navbar-expand-lg navbar-light navbar-fleet py-2 mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+                <img src="{% static 'fleet/logo_fleet.png' %}" alt="Fleet Logo" class="brand-logo me-3">
+                <span>Flota</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Strona główna</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">Panel admina</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość podstron -->
+    <main class="container flex-grow-1">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        <div class="p-4 bg-white rounded shadow-sm">
+            <h1>System Zarządzania Flotą</h1>
+            <p class="text-muted mb-0">Szablon bazowy <code>base.html</code> działa poprawnie.</p>
+        </div>
+        {% endblock %}
+    </main>
+
+    <!-- Stopka -->
+    <footer class="footer-fleet text-light text-center py-3 mt-4">
+        <div class="container">
+            <small>&copy; 2026 System Zarządzania Flotą</small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
