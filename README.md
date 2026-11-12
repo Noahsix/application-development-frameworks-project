@@ -10,13 +10,22 @@ source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 python manage.py migrate          # utworzenie tabel w db.sqlite3
-python manage.py seed_db          # dane testowe (konta + 5 samochodów)
+python manage.py seed_db          # dane testowe (konta, 5 aut, rezerwacje, serwisy)
 python manage.py runserver
 ```
 
 Plik `db.sqlite3` jest w `.gitignore` – każdy generuje identyczną bazę testową
 komendą `seed_db`. Komendę można uruchamiać wielokrotnie (nie tworzy duplikatów,
 przywraca dane do stanu początkowego).
+
+Żeby zacząć od czystej floty (np. po ręcznym dodawaniu aut w panelu admina):
+
+```bash
+python manage.py seed_db --reset  # usuwa pojazdy, rezerwacje i serwisy, potem wstawia dane od nowa
+```
+
+Dane testowe: 5 samochodów, 3 rezerwacje (zakończona, aktywna, oczekująca)
+i 2 wpisy serwisowe. Daty liczone są względem dnia uruchomienia komendy.
 
 ## Konta testowe
 
