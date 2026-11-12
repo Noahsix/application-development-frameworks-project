@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Logowanie | System Zarządzania Flotą{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="h3 mb-1 text-center">Logowanie</h1>
+                <p class="text-muted text-center mb-4">Zaloguj się, aby korzystać z systemu.</p>
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                </div>
+                {% endif %}
+
+                {% if next and user.is_authenticated %}
+                <div class="alert alert-warning" role="alert">
+                    Nie masz uprawnień do tej strony. Zaloguj się na konto z odpowiednimi uprawnieniami.
+                </div>
+                {% elif next %}
+                <div class="alert alert-info" role="alert">
+                    Zaloguj się, aby zobaczyć tę stronę.
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">Nazwa użytkownika</label>
+                        <input type="text"
+                               name="{{ form.username.html_name }}"
+                               id="{{ form.username.id_for_label }}"
+                               value="{{ form.username.value|default:'' }}"
+                               class="form-control{% if form.username.errors %} is-invalid{% endif %}"
+                               autocomplete="username" autofocus required>
+                        {% for error in form.username.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">Hasło</label>
+                        <input type="password"
+                               name="{{ form.password.html_name }}"
+                               id="{{ form.password.id_for_label }}"
+                               class="form-control{% if form.password.errors %} is-invalid{% endif %}"
+                               autocomplete="current-password" required>
+                        {% for error in form.password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <input type="hidden" name="next" value="{{ next }}">
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Zaloguj się</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
