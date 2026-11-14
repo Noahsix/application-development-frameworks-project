@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Wbudowane widoki logowania/wylogowania Django: /accounts/login/, /accounts/logout/ itd.
     path('accounts/', include('django.contrib.auth.urls')),
+    # Własne widoki tworzone dla aplikacji "fleet" 
+    path('', include('fleet.urls')), 
 ]
