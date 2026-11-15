@@ -32,3 +32,7 @@ przywraca dane do stanu początkowego).
 - po zalogowaniu i wylogowaniu użytkownik trafia na `/`
 
 Widoki chronione dla zalogowanych: dekorator `@login_required` lub `LoginRequiredMixin`.
+
+## Dostępne widoki aplikacji
+
+- `/vehicles/` – ogólna lista pojazdów wraz z wyszukiwarką (po marce, modelu, nr rejestracyjnym) i filtrowaniem po statusie.
