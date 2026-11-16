@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.registration_number }}) - Szczegóły pojazdu
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="/" class="btn btn-outline-secondary">
+        &larr; Powrót do listy pojazdów
+    </a>
+</div>
+
+<!-- Karta główna: Specyfikacja techniczna pojazdu (wyświetlanie na podstawie modelu Vehicle) -->
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h2 class="h4 mb-0 fw-bold">
+            {{ vehicle.brand }} {{ vehicle.model }}
+            <span class="text-muted fw-normal">({{ vehicle.registration_number }})</span>
+        </h2>
+        {% if vehicle.status == 'available' %}
+        <span class="badge bg-success fs-6">{{ vehicle.get_status_display }}</span>
+        {% elif vehicle.status == 'rented' %}
+        <span class="badge bg-warning text-dark fs-6">{{ vehicle.get_status_display }}</span>
+        {% elif vehicle.status == 'service' %}
+        <span class="badge bg-danger fs-6">{{ vehicle.get_status_display }}</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <h3 class="h6 text-uppercase text-muted mb-3">Specyfikacja techniczna pojazdu</h3>
+        <div class="row g-3">
+            <div class="col-sm-6 col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <small class="text-muted d-block">Marka</small>
+                    <strong class="fs-5">{{ vehicle.brand }}</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-3">
+                <div class="p-3 bg-light rounded">
+                    <small class="text-muted d-block">Model</small>
+                    <strong class="fs-5">{{ vehicle.model }}</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <div class="p-3 bg-light rounded">
+                    <small class="text-muted d-block">Rok produkcji</small>
+                    <strong class="fs-5">{{ vehicle.production_year }}</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-2">
+                <div class="p-3 bg-light rounded">
+                    <small class="text-muted d-block">Przebieg (km)</small>
+                    <strong class="fs-5">{{ vehicle.mileage }} km</strong>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-2">
+                <div class="p-3 bg-light rounded">
+                    <small class="text-muted d-block">Numer rejestracyjny</small>
+                    <strong class="fs-5">{{ vehicle.registration_number }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sekcja: Historia rezerwacji (wyświetlanie na podstawie modelu Reservation) -->
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-header bg-white py-3">
+        <h3 class="h5 mb-0 fw-bold">Historia rezerwacji</h3>
+    </div>
+    <div class="card-body p-0">
+        {% if reservations %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Imię i nazwisko klienta</th>
+                        <th>E-mail klienta</th>
+                        <th>Data wypożyczenia</th>
+                        <th>Data zwrotu</th>
+                        <th>Status rezerwacji</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td class="fw-semibold">{{reservation.customer_name}}</td>
+                        <td>{{reservation.customer_email}}</td>
+                        <td>{{ reservation.start_date|date:"Y-m-d" }}</td>
+                        <td>{{ reservation.end_date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if reservation.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">{{ reservation.get_status_display }}</span>
+                            {% elif reservation.status == 'active' %}
+                            <span class="badge bg-primary">{{ reservation.get_status_display }}</span>
+                            {% elif reservation.status == 'completed' %}
+                            <span class="badge bg-success">{{ reservation.get_status_display }}</span>
+                            {% elif reservation.status == 'cancelled' %}
+                            <span class="badge bg-secondary">{{ reservation.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">
+            Brak historii rezerwacji dla tego pojazdu.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Sekcja: Historia serwisowa (wyświetlanie na podstawie modelu ServiceLog) -->
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-header bg-white py-3">
+        <h3 class="h5 mb-0 fw-bold">Historia serwisowa</h3>
+    </div>
+    <div class="card-body p-0">
+        {% if service_logs %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 160px;">Data serwisu</th>
+                        <th>Opis wykonanych prac</th>
+                        <th class="text-end" style="width: 160px;">Koszt (PLN)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in service_logs %}
+                    <tr>
+                        <td>{{ log.service_date|date:"Y-m-d" }}</td>
+                        <td>{{ log.description }}</td>
+                        <td class="text-end fw-semibold">{{ log.cost }} PLN</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">
+            Brak wpisów w historii serwisowej dla tego pojazdu.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
