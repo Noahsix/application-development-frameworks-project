@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Lista pojazdów | System Zarządzania Flotą{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Lista pojazdów</h1>
+</div>
+
+<!-- Poziomy formularz wyszukiwania -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label for="{{ form.query.id_for_label }}" class="form-label">{{ form.query.label }}</label>
+                {{ form.query }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                {{ form.status }}
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Szukaj</button>
+                <a href="{% url 'vehicle_list' %}" class="btn btn-outline-secondary w-100">Wyczyść</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabela z listą pojazdów -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Marka</th>
+                        <th>Model</th>
+                        <th>Nr rejestracyjny</th>
+                        <th>Status</th>
+                        <th class="text-end">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vehicle in vehicles %}
+                    <tr>
+                        <td class="fw-semibold">{{ vehicle.brand }}</td>
+                        <td>{{ vehicle.model }}</td>
+                        <td><code>{{ vehicle.registration_number }}</code></td>
+                        <td>
+                            {% if vehicle.status == 'available' %}
+                                <span class="badge bg-success">{{ vehicle.get_status_display }}</span>
+                            {% elif vehicle.status == 'rented' %}
+                                <span class="badge bg-warning text-dark">{{ vehicle.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ vehicle.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-sm btn-outline-primary">
+                                Szczegóły
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            Brak pojazdów spełniających kryteria wyszukiwania.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
