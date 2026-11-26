@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="mb-4">
-    <a href="/" class="btn btn-outline-secondary">
+    <a href="{% url 'vehicle_list' %}" class="btn btn-outline-secondary">
         &larr; Powrót do listy pojazdów
     </a>
 </div>
@@ -77,6 +77,8 @@
                     <tr>
                         <th>Imię i nazwisko klienta</th>
                         <th>E-mail klienta</th>
+                        <th>Pracownik</th>
+                        <th>Cel wyjazdu</th>
                         <th>Data wypożyczenia</th>
                         <th>Data zwrotu</th>
                         <th>Status rezerwacji</th>
@@ -87,6 +89,8 @@
                     <tr>
                         <td class="fw-semibold">{{reservation.customer_name}}</td>
                         <td>{{reservation.customer_email}}</td>
+                        <td>{{ reservation.user.get_full_name|default:reservation.user.username|default:"—" }}</td>
+                        <td>{{ reservation.purpose|default:"—" }}</td>
                         <td>{{ reservation.start_date|date:"Y-m-d" }}</td>
                         <td>{{ reservation.end_date|date:"Y-m-d" }}</td>
                         <td>

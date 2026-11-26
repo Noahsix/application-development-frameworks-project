@@ -11,7 +11,8 @@ Tworzy (lub aktualizuje, jeśli już istnieją):
   - 1 konto administratora  (admin / admin123)         -> dostęp do /admin/
   - 1 konto pracownika      (pracownik / pracownik123) -> zwykły użytkownik
   - 5 przykładowych samochodów
-  - 3 rezerwacje (zakończoną, aktywną i oczekującą)
+  - 3 rezerwacje (zakończoną, aktywną i oczekującą) z celem wyjazdu,
+    przypisane do kont (2 pracownika, 1 administratora)
   - 2 wpisy serwisowe
 
 Daty rezerwacji i serwisów liczone są względem dzisiejszej daty, więc
@@ -60,16 +61,24 @@ VEHICLES = [
 ]
 
 # Daty podane jako przesunięcie w dniach względem dzisiaj.
+# `user` – login konta, do którego przypisana jest rezerwacja
+# (pracownik widzi w „Moich rezerwacjach” 2 swoje, administrator wszystkie 3).
 # Statusy są spójne ze statusami pojazdów powyżej
 # (Golf jest „Wypożyczony” -> ma aktywną rezerwację).
 RESERVATIONS = [
-    {'vehicle': 'SC 12345', 'customer_name': 'Anna Nowak',
+    {'vehicle': 'SC 12345', 'user': 'pracownik',
+     'purpose': 'Spotkanie z klientem w Katowicach',
+     'customer_name': 'Anna Nowak',
      'customer_email': 'anna.nowak@example.com',
      'start': -20, 'end': -15, 'status': 'completed'},
-    {'vehicle': 'SC 34567', 'customer_name': 'Piotr Wiśniewski',
+    {'vehicle': 'SC 34567', 'user': 'pracownik',
+     'purpose': 'Delegacja do Warszawy',
+     'customer_name': 'Piotr Wiśniewski',
      'customer_email': 'piotr.wisniewski@example.com',
      'start': -2, 'end': 5, 'status': 'active'},
-    {'vehicle': 'SC 56789', 'customer_name': 'Katarzyna Zielińska',
+    {'vehicle': 'SC 56789', 'user': 'admin',
+     'purpose': 'Szkolenie w Krakowie',
+     'customer_name': 'Katarzyna Zielińska',
      'customer_email': 'katarzyna.zielinska@example.com',
      'start': 7, 'end': 10, 'status': 'pending'},
 ]
@@ -102,8 +111,10 @@ class Command(BaseCommand):
         if options['reset']:
             self._reset()
 
-        self._create_user(ADMIN, is_admin=True)
-        self._create_user(EMPLOYEE, is_admin=False)
+        users = {
+            ADMIN['username']: self._create_user(ADMIN, is_admin=True),
+            EMPLOYEE['username']: self._create_user(EMPLOYEE, is_admin=False),
+        }
 
         vehicles = {}
         for data in VEHICLES:
@@ -125,6 +136,8 @@ class Command(BaseCommand):
                     'customer_email': data['customer_email'],
                 },
                 values={
+                    'user': users[data['user']],
+                    'purpose': data['purpose'],
                     'customer_name': data['customer_name'],
                     'start_date': today + timedelta(days=data['start']),
                     'end_date': today + timedelta(days=data['end']),
@@ -188,6 +201,7 @@ class Command(BaseCommand):
         user.save()
         role = 'administrator' if is_admin else 'pracownik'
         self._log(created, f'Użytkownik ({role}): {user.username}')
+        return user
 
     def _log(self, created, text):
         prefix = 'Utworzono' if created else 'Zaktualizowano'

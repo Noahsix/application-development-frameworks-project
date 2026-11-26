@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{% if show_all %}Wszystkie rezerwacje{% else %}Moje rezerwacje{% endif %} | System Zarządzania Flotą{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h1 class="h3 mb-0">{% if show_all %}Wszystkie rezerwacje{% else %}Moje rezerwacje{% endif %}</h1>
+    {% if show_all %}
+    <span class="badge bg-dark">Widok administratora – rezerwacje wszystkich pracowników</span>
+    {% endif %}
+</div>
+
+<!-- Formularz filtrowania (GET) -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label for="{{ form.query.id_for_label }}" class="form-label">{{ form.query.label }}</label>
+                {{ form.query }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                {{ form.status }}
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Szukaj</button>
+                <a href="{% url 'my_reservations' %}" class="btn btn-outline-secondary w-100">Wyczyść</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabela rezerwacji -->
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Pojazd</th>
+                        {% if show_all %}<th>Pracownik</th>{% endif %}
+                        <th>Cel wyjazdu</th>
+                        <th>Od</th>
+                        <th>Do</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'vehicle_detail' reservation.vehicle.id %}" class="fw-semibold text-decoration-none">
+                                {{ reservation.vehicle.brand }} {{ reservation.vehicle.model }}
+                            </a>
+                            <div><code class="small">{{ reservation.vehicle.registration_number }}</code></div>
+                        </td>
+                        {% if show_all %}
+                        <td>
+                            {% if reservation.user %}
+                            {{ reservation.user.get_full_name|default:reservation.user.username }}
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                        <td>{{ reservation.purpose|default:"—" }}</td>
+                        <td>{{ reservation.start_date|date:"Y-m-d" }}</td>
+                        <td>{{ reservation.end_date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if reservation.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">{{ reservation.get_status_display }}</span>
+                            {% elif reservation.status == 'active' %}
+                            <span class="badge bg-primary">{{ reservation.get_status_display }}</span>
+                            {% elif reservation.status == 'completed' %}
+                            <span class="badge bg-success">{{ reservation.get_status_display }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ reservation.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if show_all %}6{% else %}5{% endif %}" class="text-center text-muted py-4">
+                            Brak rezerwacji spełniających kryteria.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
