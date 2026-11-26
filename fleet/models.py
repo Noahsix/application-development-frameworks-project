@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.conf import settings
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -51,6 +52,19 @@ class Reservation(models.Model):
         on_delete=models.CASCADE,
         related_name='reservations',
         verbose_name="Pojazd"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reservations',
+        verbose_name="Pracownik"
+    )
+    purpose = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name="Cel wyjazdu"
     )
     customer_name = models.CharField(max_length=150, verbose_name="Imię i nazwisko klienta")
     customer_email = models.EmailField(verbose_name="E-mail klienta")

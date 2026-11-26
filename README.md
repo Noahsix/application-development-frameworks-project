@@ -24,7 +24,8 @@ przywraca dane do stanu początkowego).
 python manage.py seed_db --reset  # usuwa pojazdy, rezerwacje i serwisy, potem wstawia dane od nowa
 ```
 
-Dane testowe: 5 samochodów, 3 rezerwacje (zakończona, aktywna, oczekująca)
+Dane testowe: 5 samochodów, 3 rezerwacje (zakończona, aktywna, oczekująca;
+2 przypisane do konta `pracownik`, 1 do `admin`)
 i 2 wpisy serwisowe. Daty liczone są względem dnia uruchomienia komendy.
 
 ## Konta testowe
@@ -45,3 +46,16 @@ Widoki chronione dla zalogowanych: dekorator `@login_required` lub `LoginRequire
 ## Dostępne widoki aplikacji
 
 - `/vehicles/` – ogólna lista pojazdów wraz z wyszukiwarką (po marce, modelu, nr rejestracyjnym) i filtrowaniem po statusie.
+
+## Najważniejsze strony
+
+| Adres               | Opis                                                                 |
+|---------------------|----------------------------------------------------------------------|
+| `/`                 | strona główna z licznikami pojazdów                                  |
+| `/vehicles/`        | lista pojazdów z wyszukiwarką                                        |
+| `/vehicles/<id>/`   | szczegóły pojazdu, historia rezerwacji i serwisu                     |
+| `/my-reservations/` | rezerwacje zalogowanego pracownika (administrator widzi wszystkie)   |
+| `/admin/`           | panel administratora                                                 |
+
+Po pobraniu zmian z nową migracją uruchom ponownie `python manage.py migrate`
+i `python manage.py seed_db`.

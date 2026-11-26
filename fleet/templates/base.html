@@ -76,7 +76,7 @@
     <!-- Pasek nawigacji -->
     <nav class="navbar navbar-expand-lg navbar-light navbar-fleet py-2 mb-4">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="{% url 'home' %}">
                 <img src="{% static 'fleet/logo_fleet.png' %}" alt="Fleet Logo" class="brand-logo me-3">
                 <span>Flota</span>
             </a>
@@ -84,13 +84,37 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto gap-1">
+                <ul class="navbar-nav ms-auto gap-1 align-items-lg-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Strona główna</a>
+                        <a class="nav-link" href="{% url 'home' %}">Strona główna</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin/">Panel admina</a>
+                        <a class="nav-link" href="{% url 'vehicle_list' %}">Pojazdy</a>
                     </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my_reservations' %}">
+                            {% if user.is_staff %}Rezerwacje{% else %}Moje rezerwacje{% endif %}
+                        </a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}">Panel admina</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item ms-lg-2">
+                        <form method="post" action="{% url 'logout' %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                Wyloguj ({{ user.username }})
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-primary btn-sm" href="{% url 'login' %}">Zaloguj</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

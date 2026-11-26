@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Strona główna | System Zarządzania Flotą{% endblock %}
+
+{% block content %}
+<div class="p-4 p-md-5 mb-4 bg-white rounded shadow-sm">
+    <h1 class="h2 fw-bold mb-2">System Zarządzania Flotą</h1>
+    {% if user.is_authenticated %}
+    <p class="text-muted mb-4">
+        Witaj, {{ user.first_name|default:user.username }}!
+        {% if user.is_staff %}Jesteś zalogowany jako administrator.{% else %}Jesteś zalogowany jako pracownik.{% endif %}
+    </p>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'vehicle_list' %}" class="btn btn-primary">Przeglądaj pojazdy</a>
+        <a href="{% url 'my_reservations' %}" class="btn btn-outline-primary">
+            {% if user.is_staff %}Wszystkie rezerwacje{% else %}Moje rezerwacje{% endif %}
+            {% if my_active_count %}<span class="badge bg-primary ms-1">{{ my_active_count }}</span>{% endif %}
+        </a>
+    </div>
+    {% else %}
+    <p class="text-muted mb-4">Zaloguj się, aby przeglądać swoje rezerwacje.</p>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'login' %}" class="btn btn-primary">Zaloguj się</a>
+        <a href="{% url 'vehicle_list' %}" class="btn btn-outline-primary">Przeglądaj pojazdy</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row g-3">
+    <div class="col-6 col-lg-3">
+        <a href="{% url 'vehicle_list' %}" class="text-decoration-none">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase">Wszystkie pojazdy</small>
+                    <div class="display-6 fw-bold text-dark">{{ vehicle_count }}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-lg-3">
+        <a href="{% url 'vehicle_list' %}?status=available" class="text-decoration-none">
+            <div class="card border-0 border-start border-4 border-success shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase">Dostępne</small>
+                    <div class="display-6 fw-bold text-success">{{ available_count }}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-lg-3">
+        <a href="{% url 'vehicle_list' %}?status=rented" class="text-decoration-none">
+            <div class="card border-0 border-start border-4 border-warning shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase">Wypożyczone</small>
+                    <div class="display-6 fw-bold text-warning">{{ rented_count }}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-6 col-lg-3">
+        <a href="{% url 'vehicle_list' %}?status=service" class="text-decoration-none">
+            <div class="card border-0 border-start border-4 border-danger shadow-sm h-100">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase">W serwisie</small>
+                    <div class="display-6 fw-bold text-danger">{{ service_count }}</div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

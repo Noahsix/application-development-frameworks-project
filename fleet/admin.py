@@ -11,9 +11,9 @@ class VehicleAdmin(admin.ModelAdmin):
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('vehicle', 'customer_name', 'customer_email', 'start_date', 'end_date', 'status')
-    list_filter = ('status', 'start_date', 'end_date')
-    search_fields = ('customer_name', 'customer_email', 'vehicle__registration_number', 'vehicle__brand')
+    list_display = ('vehicle', 'user', 'purpose', 'customer_name', 'start_date', 'end_date', 'status')
+    list_filter = ('status', 'user', 'start_date', 'end_date')
+    search_fields = ('customer_name', 'customer_email', 'purpose', 'user__username', 'vehicle__registration_number', 'vehicle__brand')
 
 
 @admin.register(ServiceLog)
